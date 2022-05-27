@@ -1,0 +1,114 @@
+/*Quizと共通設定*/
+* {
+    padding: 0;
+    margin: 0;
+    font-family: "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro", "メイリオ", Meiryo, Osaka, "ＭＳ Ｐゴシック", "MS PGothic", sans-serif;
+    line-height: 1.8;
+    font-size: 16px;
+    color: #333;
+}
+
+.wrap-content {
+    max-width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+html {
+    height: auto;
+}
+
+body {
+    width: 100%;
+    height: auto;
+    background: url("../img/bg.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.white_wrap {
+    display: block;
+    height: 100%;
+    width: 100%;
+    margin: 0 auto;
+    background: url("../img/bg.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    z-index: -2;
+}
+.white_wrap div{
+    display: block;
+    height: 100%;
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+    background-color: rgba(255, 255, 255, 0.6);
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    z-index: -1;
+}
+
+/*header*/
+header .conA {
+    background-color: #5c8cc9;
+    color: #fff;
+    text-align: right;
+}
+header .conB {
+    background-color: #bfe7f8;
+}
+
+header .conB .wrap-content {
+    display: flex;
+    height: 8em;
+}
+
+header h1 {
+    font-size: 4em;
+    line-height: 0;
+    margin-top: auto;
+    white-space: nowrap;
+}
+
+#kana {
+    font-size: 0.9em;
+}
+
+header #logo {
+    height: 80%;
+    background-image: url("../img/logo.png");
+    background-size: cover;
+    margin: auto 1em auto 1.6%;
+}
+
+.textinput {
+    line-height: 1.25rem;
+    font-size: 1rem;
+    height: 1.25rem;
+    border: 0.125rem solid#666;
+    border-radius: 0.5rem;
+}
+header .conA div {
+    color: #fff;
+}
+
+header .conA div a {
+    color: #fff;
+}
+
+header .conB div {
+    margin: 0 auto;
+    max-width: 1000px;
+}
+
+header .conB div .wrap-content {
+    display: flex;
+    justify-content: center;
+    height: 8em;
+}

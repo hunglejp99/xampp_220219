@@ -1,0 +1,143 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>ユーザー追加</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.2/socket.io.js"></script>
+    <link rel="stylesheet" href="css/base.css">
+    <style>
+        header .conA div {
+            display: flex;
+            justify-content: right;
+        }
+
+        header .conA div p {
+            color: #fff;
+        }
+
+        .conB .wrap-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        form.wrap-content {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        .textinput {
+            width: 60%;
+            height: 2.5rem;
+            font-size: 1.5rem;
+        }
+
+        h2 {
+            font-size: 3rem;
+        }
+
+        label {
+            display: flex;
+            width: 80%;
+            justify-content: space-between;
+            align-items: center;
+            margin: 1rem auto;
+        }
+
+        label:last-child {
+            justify-content: center;
+        }
+
+        label:last-child input {
+            width: 100%;
+            height: 5rem;
+            font-size: 2rem;
+            font-family: "游ゴシック体", YuGothic;
+            border-radius: 13px 13px 13px 13px;
+            font-weight: bold;
+            color: #fff;
+            background: rgb(81, 140, 158);
+            background: linear-gradient(0deg, rgba(81, 140, 158, 1) 0%, rgba(100, 178, 202, 1) 49%, rgba(167, 215, 230, 1) 51%, rgba(169, 214, 228, 1) 100%);
+        }
+
+        label p {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        form {
+            padding-top: 5rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="white_wrap"><div></div></div>
+    <header>
+        <div class="conA">
+            <div class="wrap-content">
+                <p>アカウントを追加してください</p>
+            </div>
+            <!--werap-content-->
+        </div>
+        <!--conA-->
+
+        <div class="conB">
+            <div class="wrap-content">
+                <h2>新規ユーザー追加ページ</h2>
+            </div>
+            <!--werap-content-->
+        </div>
+        <!--conB-->
+    </header>
+    <main class="wrap-content">
+        <form id="addUser_form" class="wrap-content">
+            <label>
+                <p>学籍番号:</p><input type="number" name="num" placeholder="学籍番号" class="textinput" required>
+            </label>
+            <label>
+                <p>名前:</p><input type="text" name="username" placeholder="ユーザーネーム" class="textinput" required>
+            </label>
+            <label>
+                <p>パスワード:</p><input type="password" name="password" placeholder="パスワード" class="textinput" required>
+            </label>
+            <label><input type="button" name="send" id="send_addUser" value="追加する"></label>
+        </form>
+    </main>
+    <script>
+        var socket = io.connect();
+        var addform = document.getElementById('addUser_form');
+        var sendButton = document.getElementById('send_addUser');
+
+        //ユーザーネーム・パスワード送信
+        sendButton.addEventListener('click', function (e) {
+            e.preventDefault();
+            if (addform.num.value != "" && addform.username.value != "" && addform.password.value != "") {
+                socket.emit('addUser_num', addform.num.value);
+                socket.emit('addUser_Uname', addform.username.value);
+                socket.emit('addUser_pass', addform.password.value);
+                console.log("AddUser_送信");
+                console.log("送信");
+            } else {
+                alert("未入力項目があります！_adduser")
+                console.log("送信してません");
+            }
+        })
+
+        socket.on('AddUser', function (ans) {
+            console.log(ans);
+            if (ans) {
+                alert("ユーザー追加に成功しました！_adduser")
+                location.href = 'index.html';
+            } else {
+                alert("ユーザー追加に失敗しました！_adduser")
+            }
+        });
+
+    </script>
+</body>
+
+</html>

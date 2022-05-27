@@ -1,0 +1,245 @@
+<!doctype html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>先生ページ</title>
+	<link rel="stylesheet" href="css/base.css">
+	<link rel="stylesheet" href="css/grid.css">
+	<link rel="stylesheet" href="css/sensei.css">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.2/socket.io.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.6.0/chart.min.js"></script>
+	<style>
+		ul {
+			list-style: none;
+		}
+
+		.row_rev {
+			width: 50vw;
+			overflow-y: scroll;
+			height: 30vh;
+
+		}
+
+		.row_rev li {
+			width: 80vw;
+		}
+
+		#container {
+			/* コンテナ用の div について */
+			position: relative;
+			/* 座標指定を相対値指定にする */
+		}
+
+		#log {
+			color: #999999;
+		}
+
+		#chart {
+			display: inline-block;
+			width: 40%;
+			position: fixed;
+			top: 0;
+			right: 0;
+		}
+	</style>
+</head>
+
+<body>
+
+	<div class="container">
+		<form name="myform">
+			<input name="text" type="text">
+			<button name="btn">送信</button>
+		</form>
+		<hr>
+		<button id="Logmode">Log</button>
+		<div class="comment">
+			<ul id="message">
+			</ul>
+		</div>
+		<ul id="pool" class="row_rev">
+		</ul>
+		<ul id="log" class="row_rev">
+		</ul>
+	</div>
+	<script>
+		var socket = io.connect();                              //ソケット定義
+		var pool = document.getElementById('pool');             //チャット固定コメント ul
+		var Log = document.getElementById('log');               //チャットLog
+		var form = document.forms.myform;                       //チャット入力フォーム form
+
+
+		// ### cookieを配列として取り出し
+		function getCookieArray() {
+			var arr = new Array();
+			if (document.cookie != "") {
+				var tmp = document.cookie.split("; ");
+				for (var i = 0; i < tmp.length; i++) {
+					var data = tmp[i].split("=");
+					arr[data[0]] = decodeURIComponent(data[1]);
+				}
+			}
+			return arr;
+		}
+		arr = getCookieArray();
+		socket.emit('check_cookie', arr['begginer']);
+		window.addEventListener("popstate", function (e) {
+			arr = getCookieArray();
+			socket.emit('check_cookie', arr['begginer']);
+		});
+
+		socket.emit('LOG', "call");                             //過去ログ取得
+
+		//loginしているか
+		socket.on('Login', function (ans) {
+			if (!ans) {
+				location.href = '/';
+				alert("ログインに失敗しました！_checkemo")
+			}
+		});
+
+
+		// コメント送信
+		form.btn.addEventListener('click', function (e) {
+			e.preventDefault();
+			if (!form.text.value == "") {
+				socket.emit('chat', form.text.value);
+				form.text.value = '';
+				console.log("送信");
+			} else {
+				console.log("送信してません");
+			}
+		})
+
+		// コメント受け取る処理
+		socket.on('chat', function (msg) {
+			var li = document.createElement('li');
+			li.textContent = msg;
+			pool.appendChild(li);
+			//createText(msg);
+		});
+
+		//log受け取る処理
+		socket.on('LOG', function (log) {
+			var li = document.createElement('li');
+			li.textContent = log;
+			Log.appendChild(li);
+		});
+
+
+		//過去ログ欄表示の切り替え
+		document.getElementById("Logmode").addEventListener('click', function (e) {
+			if (!log_mode) {
+				log_mode = true;
+				if (!move_mode) Log.style.display = "flex";
+			} else {
+				log_mode = false;
+				Log.style.display = "none";
+			}
+		})
+
+	</script>
+
+
+
+	<button onclick="Onclick();">要求</button>
+
+	<div id="chart"><canvas id="mychart"></canvas></div>
+
+	<!-- Icon -->
+	<div class="icon__container col l-5 l-o-4 m-6 c-6">
+		<div class="row">
+			<div id="icon_tanoshi-ss" class="icon__content col l-3 l-o-4 m-4 m-o-4 c-4">
+				<h6 class="icon__heading pop-outin">楽しいわ!</h6>
+				<img src="img/Asset 2-8.png" alt="" class="img__icon">
+			</div>
+			<div id="icon_komatta-ss" class="icon__content col l-3 l-o-4 m-4 m-o-4 c-4">
+				<h6 class="icon__heading pop-outin">困ったわ!</h6>
+				<img src="img/Asset 3-8.png" alt="" class="img__icon">
+			</div>
+			<div id="icon_odoroki-ss" class="icon__content col l-3 l-o-4 m-4 m-o-4 c-4">
+				<h6 class="icon__heading pop-outin">ビックリ!</h6>
+				<img src="img/Asset 4-8.png" alt="" class="img__icon">
+			</div>
+		</div>
+	</div>
+
+	<script>
+		var chartVal = [1, 1, 1];
+		//chart作成
+		var ctx = document.getElementById('mychart');
+		var myChart = new Chart(ctx, {
+			type: 'pie',
+			data: {
+				labels: ["笑顔", "驚いた", "困った"],
+				datasets: [{
+					label: 'Dataset 1',
+					data: chartVal,
+					backgroundColor: ['#f48', '#484', '#000CDF']
+				}]
+			},
+			options: {
+				responsive: true,
+				plugins: {
+					legend: {
+						position: 'top',
+					},
+					title: {
+						display: true,
+						text: 'Chart.js pie Chart'
+
+					}
+				}
+			}
+		});
+
+		function SetChart(hp, spl, tro) {
+			myChart.data.datasets.forEach(dataset => {
+				dataset.data = [hp, spl, tro];
+			});
+
+			myChart.update();
+
+		}
+
+		var socket = io.connect();
+		// IDを習得
+			var icon_tanoshi_ss = document.getElementById('icon_tanoshi-ss');
+			var icon_komatta_ss = document.getElementById('icon_komatta-ss');
+			var icon_odoroki_ss = document.getElementById('icon_odoroki-ss');
+
+		function Onclick() {
+			
+			socket.emit("emot", "call");
+			console.log("call_emo");
+		}
+		socket.on("emot", function (val) {
+			console.log("楽しい: " + val[2] + "驚き: " + val[1] + "困った: " + val[0]);
+			SetChart(val[2], val[1], val[0]);
+			if (val[0] == val[2] && val[0] == val[1]) {
+				console.log("変化なし");
+			} else {
+				if (val[0] >= val[2] && val[0] >= val[1]) {
+					console.log("困った");
+					icon_komatta_ss.style.display = "block"; //アイコンを表示する
+					icon_tanoshi_ss.style.display = "none"; //ほかのアイコンを隠れる
+					icon_odoroki_ss.style.display = "none";//ほかのアイコンを隠れる
+				} else if (val[1] >= val[2] && val[1] >= val[0]) {
+					console.log("驚き");
+					icon_odoroki_ss.style.display = "block";//アイコンを表示する
+					icon_tanoshi_ss.style.display = "none";//ほかのアイコンを隠れる
+					icon_komatta_ss.style.display = "none";//ほかのアイコンを隠れる
+				} else if (val[2] >= val[1] && val[2] >= val[0]) {
+					console.log("楽しい");
+					icon_tanoshi_ss.style.display = "block";//アイコンを表示する
+					icon_komatta_ss.style.display = "none";//ほかのアイコンを隠れる
+					icon_odoroki_ss.style.display = "none";//ほかのアイコンを隠れる
+				}
+			}
+
+		});
+	</script>
+</body>
+
+</html>

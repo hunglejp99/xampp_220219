@@ -1,0 +1,19 @@
+5
+.\mysql-relay-bin-version@003a@0020@002710@002e4@002e21@002dmariadb@0027@0020@0020socket@003a@0020@0027@0027@0020@0020port@003a@00203306@0020@0020mariadb@002eorg@0020binary@0020distribution@000d.000001
+4
+
+0
+0
+2022-02-27 15:00:29 17 [Warning] Aborted connection 17 to db: 'login' user: 'root' host: 'localhost' (Got an error reading communication packets)
+2022-02-27 15:00:29 18 [Warning] Aborted connection 18 to db: 'login' user: 'root' host: 'localhost' (Got an error reading communication packets)
+2022-02-27 15:00:29 53 [Warning] Aborted connection 53 to db: 'login' user: 'root' host: 'localhost' (Got an error reading communication packets)
+2022-02-27 15:00:29 54 [Warning] Aborted connection 54 to db: 'login' user: 'root' host: 'localhost' (Got an error reading communication packets)
+2022-02-27 15:00:29 55 [Warning] Aborted connection 55 to db: 'quiz' user: 'root' host: 'localhost' (Got an error reading communication packets)
+r running query, slave SQL thread aborted. Fix the problem, and restart the slave SQL thread with "SLAVE START". We stopped at log 'FIRST' position 0
+2022-02-27 14:23:04 13 [Note] Master '2022-01-26 11:29:43 0 [Note] c:\xampp\mysql\bin\mysqld.exe: ready for connections.': Slave SQL thread exiting, replication stopped in log 'FIRST' at position 0
+2022-02-27 14:23:04 13 [Note] Master '2022-01-26 11:29:43 0 [Note] c:\xampp\mysql\bin\mysqld.exe: ready for connections.': master was :3306
+nary distribution
+2022-02-27 14:23:04 11 [ERROR] Master '2022-01-26 11:29:43 0 [Note] Added new Master_info '' to hash table': Error running query, slave SQL thread aborted. Fix the problem, and restart the slave SQL thread with "SLAVE START". We stopped at log 'FIRST' position 0
+2022-02-27 14:23:04 14 [Note] Master 'Version: '10.4.21-MariaDB'  socket: ''  port: 3306  mariadb.org binary distribution': master was :3306
+2022-02-27 14:23:04 11 [Note] Master '2022-01-26 11:29:43 0 [Note] Added new Master_info '' to hash table': Slave SQL thread exiting, replication stopped in log 'FIRST' at position 0
+2022-02-27 14:23:04 11 [Note] Master '2022-01-26 11:29:43 0 [Note] Added new Master_info '' to hash table': master was :3306

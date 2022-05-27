@@ -1,0 +1,717 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>ログインページ</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.2/socket.io.js"></script>
+    <link rel="stylesheet" href="css/base.css">
+    <style>
+        header .conA div {
+            color: #fff;
+        }
+
+        header .conA div a {
+            color: #fff;
+        }
+
+        header .conB div {
+            margin: 0 auto;
+            max-width: 1000px;
+        }
+
+        header .conB div .wrap-content {
+            display: flex;
+            justify-content: center;
+            height: 8em;
+        }
+
+        #login_form .login_IdPass {
+            width: 100%;
+            display: flex;
+            justify-content: space-around;
+        }
+
+        h1 {
+            font-size: 3rem;
+        }
+
+        #sendBt {
+            display: none;
+        }
+
+        #sendBt input {
+            display: block;
+            width: 80%;
+            height: 15rem;
+            margin: 2.2rem auto;
+            font-size: 2rem;
+            font-family: "游ゴシック体", YuGothic;
+            font-weight: bold;
+            border-radius: 13px 13px 13px 13px;
+            color: #fff;
+            background: rgb(59, 93, 104);
+            background: linear-gradient(0deg, rgba(59, 93, 104, 1) 0%, rgba(59, 93, 104, 1) 49%, rgba(143, 170, 178, 1) 51%, rgba(143, 170, 178, 1) 100%);
+        }
+
+        #startBt input {
+            display: block;
+            width: 80%;
+            height: 15rem;
+            margin: 2.2rem auto;
+            font-size: 3.8rem;
+            font-family: "游ゴシック体", YuGothic;
+            font-weight: bold;
+            border-radius: 13px 13px 13px 13px;
+            background: rgb(81, 140, 158);
+            background: linear-gradient(0deg, rgba(81, 140, 158, 1) 0%, rgba(100, 178, 202, 1) 49%, rgba(167, 215, 230, 1) 51%, rgba(169, 214, 228, 1) 100%);
+        }
+
+        #startBt input:hover {
+            opacity: 0.85;
+        }
+
+        .textinput {
+            width: 15rem;
+            height: 2.5rem;
+            font-size: 1.5rem;
+            margin-right: 1.4rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="white_wrap"><div></div></div>
+    <header>
+        <div class="conA">
+            <div class="wrap-content">
+                ようこそ、アカウントをお持ちですか？　<a href="addUser.html">ユーザーを追加</a>
+            </div>
+            <!--werap-content-->
+        </div>
+        <!--conA-->
+
+        <div class="conB">
+            <div>
+                <div class="wrap-content">
+                    <img id="logo" src="img/logo-trim.png">
+                    <h1><span id="kana">読売クイズ学科</span></h1>
+                </div>
+            </div>
+            <!--werap-content-->
+        </div>
+        <!--conB-->
+    </header>
+    <main class="wrap-content">
+        <h1>ログインページ</h1>
+        <form id="login_form" name="form">
+            <input type="text" class="textinput" name="username" placeholder="アカウント名">
+            <input type="password" class="textinput" name="password" placeholder="パスワード">
+            <label id="sendBt"><input type="button" value="ユーザーネーム・パスワード記入後、送信" onclick="Send();"></label>
+            <label id="startBt"><input type="button" value="体温測定開始" onclick="BlueTooth_conn();"></label>
+            <label>体温スキップ：<input type="button" id="kari2" value="体温スキップ" onclick="BlueTooth_skip();"></label>
+            <!-- <input type="submit" name="send"> -->
+        </form>
+    </main>
+    <script>
+        var socket = io.connect();
+        var logform = document.getElementById('login_form');
+        var sendBt = document.getElementById('sendBt');
+        var Bt_Button = document.getElementById('startBt');
+        var form = document.forms.form;
+        sendBt.style.display = "none";
+
+        //体温を格納
+        var Body_temperature = 0.1;
+        var Data_date = "2000-10-19"
+        var Data_time = "04:10:18"
+
+        //logout
+        // ### cookieを配列として取り出し
+        function getCookieArray() {
+            var arr = new Array();
+            if (document.cookie != "") {
+                var tmp = document.cookie.split("; ");
+                for (var i = 0; i < tmp.length; i++) {
+                    var data = tmp[i].split("=");
+                    arr[data[0]] = decodeURIComponent(data[1]);
+                }
+            }
+            return arr;
+        }
+        arr = getCookieArray();
+        socket.emit('logout_cookie', arr['begginer']);
+        //ユーザーネーム・パスワード送信
+        function Send() {
+            if (form.username.value == "" || form.password.value == "") {
+                sendBt.style.display = "inline";
+                Bt_Button.style.display = "none";
+                alert("ユーザーネーム/パスワードを入れてね！")
+            } else {
+                arr = getCookieArray();
+                socket.emit('login_cookie', arr['begginer']);
+                //socket.emit('login_cookie', document.cookie);
+                socket.emit('login_Uname', logform.username.value);
+                socket.emit('login_Temperature', Body_temperature);
+                socket.emit('login_Temperature_date', Data_date);
+                socket.emit('login_Temperature_time', Data_time);
+                socket.emit('login_pass', logform.password.value);
+                console.log("Login_送信");
+            }
+
+        }
+
+        socket.on('Login', function (ans) {
+            if (!ans) {
+                console.log(ans)
+                if (form.username.value != "" || form.password.value != "") {
+                    alert("ログインに失敗しました！_login");
+                }
+            } else {
+                console.log(ans);
+                var hostname = window.location.hostname;
+                //location.replace(`login_Portal.html`);
+                var hostname = window.location.hostname;
+                location.href = `http://${hostname}/portal`;
+            }
+
+        });
+
+        // BlueTooth
+        function BlueTooth_conn() {
+
+            console.log('Change');
+            let chosenHeartRateService = null;
+            navigator.bluetooth.requestDevice({
+                filters: [
+                    { services: ['health_thermometer'], },
+                    { name: ['A&D_UT201BLE_88F776'], },
+                ]
+            }).catch(err => console.log(err))
+                .then(device => device.gatt.connect())
+                .then(server => server.getPrimaryService('health_thermometer'))
+                .then(service => {
+                    chosenHeartRateService = service;
+                    return Promise.all([
+                        service.getCharacteristic('temperature_measurement')
+                            .then(handleTemperatureMeasurementCharacteristic),
+                    ]);
+                });
+
+            function handleTemperatureMeasurementCharacteristic(characteristic) {
+                console.log("characteristic!")
+                characteristic.addEventListener('characteristicvaluechanged', onTemperatureSet);
+                return characteristic.startNotifications();
+            }
+
+            function onTemperatureSet(event) {
+                let characteristic = event.target.value;
+                var temperatureMeasurement = [];
+                console.log(characteristic)
+                //バイナリデータを10進数にし0x00の形(16進数)に直し配列に入れる
+                for (let i = 0; i < 13; i++) temperatureMeasurement.push("0x" + ("00" + characteristic.getUint8(i).toString(16)).slice(-2))
+                console.log(temperatureMeasurement);
+
+                const uint8ArrayToUint16Array = (uint8Array) => {
+                    const len = uint8Array.length;
+                    if (len % 2 > 0) {
+                        throw new RangeError('Uint8Arrayの長さが2の倍数ではありません。');
+                    }
+                    const uint16Array = new Uint16Array(len / 2);
+                    for (let i = 0, j = 0; i < len; ++i) {
+                        const mod = i % 2;
+                        if (mod == 0) {
+                            uint16Array[j] += uint8Array[i] << 8;
+                        } else {
+                            uint16Array[j] += uint8Array[i];
+                            ++j;
+                        }
+                    }
+                    return uint16Array;
+                };
+
+                //var temperatureMeasurement = [0x06, 0x73, 0x01, 0x00, 0xFF, 0xE6, 0x07, 0x01, 0x0c, 0x11, 0x0f, 0x10, 0x02];
+                // 上記で定義した、「temperatureMeasurement」の配列分のバッファーを確保する（今回だと13バイト）
+                var buffer = new ArrayBuffer(temperatureMeasurement.length);
+                let dv = new DataView(buffer);
+                // データをセットする
+                temperatureMeasurement.forEach((value, index) => {
+                    dv.setUint8(index, value);
+                });
+
+                /**
+                 * Bluetoothで記録されている各データを読み込みための便利クラス
+                 */
+                class BluetoothFormat {
+
+                    /**
+                     * IEEE-11073 32-bit FLOAT型をバイナリから取得し実数に変換する
+                     * 
+                     * @param dv:DataView   バイナリデータ
+                     * @param offset:Number バイナリデータを読み取る開始位置
+                     * @param littleEndian  バイトオーダーの扱い(デフォルトは、fakse = ビッグエンディアン方式：)
+                     */
+                    static readFLOAT(dv, offset = 0, littleEndian = false) {
+
+                        // 1. バイトオーダーを指定して32ビットデータを取得
+                        var data = dv.getUint32(offset, littleEndian);
+
+                        // 2. 仮数部を取得する(32ビットの場合は下位24ビットが仮数部)
+                        //    - 取得した32ビットデータに下位24ビットの全てのフラグを立てた値を掛け算することで取得
+                        var mantissa = (data & 0x00FFFFFF);
+
+                        // 仮数部が2の補数かどうかを判定する
+                        // 下位24ビットのうちの上位1ビット目にフラグが立っていれば2の補数
+                        if ((mantissa & 0x00800000) > 0) {
+                            // 負の値の場合は、2の補数を用いて数値を求める
+                            mantissa = -1 * (~(mantissa - 0x01) & 0x00FFFFFF)
+                        }
+
+                        // 3. 指数部を取得する(32ビットの場合は上位8ビットが指数部)
+                        // 上位8ビットを取得するためには、32ビットの場合右へ24ビットシフトさせると取得可能
+                        // なお、JavaScriptの場合「>>」を利用すると、符号を維持する右シフトであるため、 
+                        // ビット演算を用いると2の補数も考慮して10進数に変換してくれる
+                        var exponential = data >> 24;
+
+                        // 「仮数部 × 基数部 ^ 指数部」の公式に当てはめて変換
+                        return mantissa * Math.pow(10, exponential);
+                    }
+
+                    /**
+                     * IEEE-11073 16-bit SFLOAT型をバイナリから取得し実数に変換する
+                     * 
+                     * @param dv:DataView   バイナリデータ
+                     * @param offset:Number バイナリデータを読み取る開始位置
+                     * @param littleEndian  バイトオーダーの扱い(デフォルトは、fakse = ビッグエンディアン方式：)
+                     */
+                    static readSFLOAT(dv, offset = 0, littleEndian = false) {
+                        // 1. バイトオーダーを指定して16ビットデータを取得
+                        var data = dv.getUint16(offset, littleEndian);
+
+                        // 2. 仮数部を取得する(16ビットの場合は下位12ビットが仮数部)
+                        //    - 取得した16ビットデータに下位12ビットの全てのフラグを立てた値を掛け算することで取得
+                        var mantissa = (data & 0x0FFF);
+
+                        // 仮数部も2の補数で判定するため16ビットのうちの12ビット中の上位1桁がマイナスを表していないかを確認
+                        if ((mantissa & 0x0800) > 0) {
+                            // もしマイナス値の場合は、1を引いた後反転処理と12ビット分の論理和を取得する)
+                            mantissa = -1 * (~(mantissa - 0x01) & 0x0FFF)
+                        }
+
+                        // 3. 指数部を取得する(16ビットの場合は上位4ビットが指数部)
+                        // 上位4ビットを取得するためには16ビットの場合右へ12ビットシフトさせると取得可能
+                        var exponential = data >> 12;
+
+                        // 「仮数部 × 基数部 ^ 指数部」の公式に当てはめて変換
+                        return mantissa * Math.pow(10, exponential);
+                    }
+
+                    /**
+                     * 計測時間を返す
+                     * - Type: org.bluetooth.characteristic.date_time - Assigned Number: 0x2A08
+                     * 
+                     * @param dv:DataView   バイナリデータ
+                     * @param _offset:Number バイナリデータを読み取る開始位置
+                     * @param littleEndian  バイトオーダーの扱い(デフォルトは、fakse = ビッグエンディアン方式：)
+                     */
+                    static readDateTime(dv, _offset = 0, littleEndian = false) {
+
+                        let offset = _offset;
+
+                        // 時間は、下記の順で計7バイトのデータを扱う
+                        // 2バイト: 年、 1バイト: 月, 日, 時, 分, 秒
+                        let year, month, day, hour, minute, second;
+
+                        year = dv.getUint16(offset, littleEndian);
+                        offset += 2;
+                        // JavaScriptでMonthは0から始まるため、取得した月から1を引いておく
+                        month = dv.getUint8(offset) - 1;
+                        offset++;
+                        day = dv.getUint8(offset);
+                        offset++;
+                        hour = dv.getUint8(offset);
+                        offset++;
+                        minute = dv.getUint8(offset);
+                        offset++;
+                        second = dv.getUint8(offset);
+
+                        var dt = new Date(year, month, day, hour, minute, second);
+                        // UnixTimestampをミリ秒単位で返す
+                        return dt.getTime();
+                    }
+
+                    /**
+                     * 計測時の状況を返す
+                     * - Type: org.bluetooth.characteristic.temperature_type - Assigned Number: 0x2A1D
+                     * 
+                     * @param dv:DataView   バイナリデータ
+                     * @param _offset:Number バイナリデータを読み取る開始位置
+                     */
+                    static readTemperatureType(dv, offset = 0) {
+                        let typeValue = dv.getUint8(offset);
+                        let type;
+                        switch (typeValue) {
+                            case 1:
+                                type = 'Armpit';
+                                break;
+                            case 2:
+                                type = 'Body (general)';
+                                break;
+                            case 3:
+                                type = 'Ear (usually ear lobe)';
+                                break;
+                            case 4:
+                                type = 'Finger';
+                                break;
+                            case 5:
+                                type = 'Gastro-intestinal Tract';
+                                break;
+                            case 6:
+                                type = 'Mouth';
+                                break;
+                            case 7:
+                                type = 'Rectum';
+                                break;
+                            case 8:
+                                type = 'Toe';
+                                break;
+                            case 9:
+                                type = 'Tympanum (ear drum)';
+                                break;
+                            default:
+                                type = '';
+                        }
+                        return type;
+                    }
+                }
+
+                /**
+                 * BLEで受信した温度データを扱うクラス
+                 *
+                 * Name: Temperature Measurement
+                 * Type: org.bluetooth.characteristic.temperature_measurementDownload / View
+                 * Assigned Number: 0x2A1C
+                 *
+                 * 参考)https://www.bluetooth.com/specifications/gatt/viewer?attributeXmlFile=org.bluetooth.characteristic.temperature_measurement.xml
+                 */
+                class TemperatureMeasurement {
+
+                    constructor(buffer, littleEndian = false) {
+                        // バイナリデータを管理する
+                        this.buffer = new DataView(buffer);
+                        this.littleEndian = littleEndian;
+
+                        // 各種データのメモリ使用量を定義する
+                        this.offset = {
+                            init: 0,                        // 初期バイト位置を記録
+                            flags: 1,                       // フラグ管理に1バイト利用する
+                            temperatureMeasurementValue: 4, // 温度は、4バイト利用
+                            timestamp: 7,                   // 計測時間は、7バイト利用
+                            temperatureType: 1,             // 計測タイプは、1バイト利用
+                        };
+                    }
+
+                    /****************************************************
+                     * 1バイト目の各種フラグが立っているかをチェックする
+                     ****************************************************/
+                    /**
+                     * 1ビット目: 温度の設定をチェック
+                     */
+                    _checkTemperatureMeasurementValueFlats() {
+                        return ((this.getFlags() & 0x01) >= 1);
+                    }
+                    /**
+                     * 2ビット目: 計測時間の記録有無をチェック
+                     */
+                    _checkTimestampFlags() {
+                        return ((this.getFlags() & 0x02) >= 1);
+                    }
+                    /**
+                     * 3ビット目: 温度タイプの記録有無をチェック
+                     */
+                    _checkTemperatureTypeFlags() {
+                        return ((this.getFlags() & 0x03) >= 1);
+                    }
+
+
+                    /****************************************************
+                     * バイナリデータの読み込み位置を取得する
+                     ****************************************************/
+                    /**
+                     * 計測時間のバイナリデータのoffsetを取得する
+                     */
+                    getTimestampOffset() {
+                        return this.offset.init + this.offset.flags + this.offset.temperatureMeasurementValue;
+                    }
+
+                    /**
+                     * 計測タイプのバイナリデータのoffsetを取得する
+                     *
+                     * - 計測時間の記録があるときとないときで開始位置が異なる
+                     */
+                    getTemperatureTypeOffset() {
+                        let offset = this.getTimestampOffset();
+                        if (this._checkTimestampFlags()) {
+                            offset += this.offset.timestamp;
+                        }
+                        return offset;
+                    }
+
+
+                    /****************************************************
+                     * バイナリデータから各種データを読み込む処理
+                     ****************************************************/
+                    /**
+                     * [Flags]
+                     * 各データがどのように保持されているかの情報を取得する
+                     */
+                    getFlags() {
+                        return this.buffer.getUint8(this.offset.init);
+                    }
+
+                    /**
+                     * [温度データ]
+                     * 摂氏(℃) または 華氏(°F)にて温度データを取得する
+                     *
+                     * どちらの場合でも、2バイト目から「IEEE-11073 32-bit FLOAT」形式で保存されている
+                     */
+                    getValue() {
+                        let offset = this.offset.init + this.offset.flags;
+                        // 2~5バイト目までが温度を管理している部分であるため、対象のバイナリデータを抜き出す
+                        return BluetoothFormat.readFLOAT(this.buffer, offset, this.littleEndian);
+                    }
+
+                    /**
+                     * [温度単位]
+                     * 単位を取得する
+                     *
+                     * Flagsの1ビット目の値が、
+                     *  - 0の場合は、摂氏(℃)  : Celsius
+                     *  - 1の場合は、華氏(°F) : Fahrenheit.
+                     */
+                    getUnit() {
+                        if (this._checkTemperatureMeasurementValueFlats()) {
+                            return 'Fahrenheit';
+                        } else {
+                            return 'Celsius';
+                        }
+                    }
+
+
+                    /**
+                     * [温度計測時間]
+                     * 計測時間があれば、UnixTimestamp形式で返す
+                     *
+                     * Flagsの2ビット目の値が1であれば時間を返す
+                     */
+                    getTimestamp() {
+                        if (this._checkTimestampFlags()) {
+                            let offset = this.getTimestampOffset();
+                            return BluetoothFormat.readDateTime(this.buffer, offset, this.littleEndian);
+                        } else {
+                            return 0;
+                        }
+                    }
+
+                    /**
+                     * [温度タイプ]
+                     * 計測タイプがあれば、計測タイプを返す
+                     *
+                     * Flagsの3ビット目の値が1であれば時間を返す
+                     */
+                    getType() {
+                        if (this._checkTemperatureTypeFlags()) {
+                            let offset = this.getTemperatureTypeOffset();
+                            return BluetoothFormat.readTemperatureType(this.buffer, offset, this.littleEndian);
+                        } else {
+                            return 0;
+                        }
+                    }
+                }
+
+                let littleEndian = true;
+                let tm = new TemperatureMeasurement(dv.buffer, littleEndian);
+                // console.log('温度:' + tm.getValue());                        // 温度:
+                // console.log('単位:' + tm.getUnit());                         // 単位:Celsius
+                // console.log('計測時間(Timestamp):' + tm.getTimestamp());     // 計測時間(Timestamp):
+                // console.log('計測時間(日時):' + new Date(tm.getTimestamp()));// 計測時間(日時):(JST)
+                // console.log('計測タイプ:' + tm.getType());                   // 計測タイプ:Body(general)
+                Body_temperature = parseFloat(tm.getValue());
+                Data = new Date(tm.getTimestamp())
+                Data_date = Data.getFullYear() + "-" + (Data.getMonth() + 1) + "-" + Data.getDate()
+                Data_time = Data.getHours() + ":" + Data.getMinutes() + ":" + Data.getSeconds()
+                Send()
+
+            }
+        }
+
+        function BlueTooth_skip() {
+            var temperatureMeasurement = [0x06, 0x73, 0x01, 0x00, 0xFF, 0xE6, 0x07, 0x01, 0x0c, 0x11, 0x0f, 0x10, 0x02];
+            var buffer = new ArrayBuffer(temperatureMeasurement.length);
+            let dv = new DataView(buffer);
+            temperatureMeasurement.forEach((value, index) => {
+                dv.setUint8(index, value);
+            });
+            class BluetoothFormat {
+                static readFLOAT(dv, offset = 0, littleEndian = false) {
+                    var data = dv.getUint32(offset, littleEndian);
+                    var mantissa = (data & 0x00FFFFFF);
+                    if ((mantissa & 0x00800000) > 0) {
+                        mantissa = -1 * (~(mantissa - 0x01) & 0x00FFFFFF)
+                    }
+                    var exponential = data >> 24;
+                    return mantissa * Math.pow(10, exponential);
+                }
+                static readSFLOAT(dv, offset = 0, littleEndian = false) {
+                    var data = dv.getUint16(offset, littleEndian);
+                    var mantissa = (data & 0x0FFF);
+
+                    if ((mantissa & 0x0800) > 0) {
+                        mantissa = -1 * (~(mantissa - 0x01) & 0x0FFF)
+                    }
+                    var exponential = data >> 12;
+                    return mantissa * Math.pow(10, exponential);
+                }
+                static readDateTime(dv, _offset = 0, littleEndian = false) {
+                    let offset = _offset;
+                    let year, month, day, hour, minute, second;
+                    year = dv.getUint16(offset, littleEndian);
+                    offset += 2;
+                    month = dv.getUint8(offset) - 1;
+                    offset++;
+                    day = dv.getUint8(offset);
+                    offset++;
+                    hour = dv.getUint8(offset);
+                    offset++;
+                    minute = dv.getUint8(offset);
+                    offset++;
+                    second = dv.getUint8(offset);
+                    var dt = new Date(year, month, day, hour, minute, second);
+                    return dt.getTime();
+                }
+                static readTemperatureType(dv, offset = 0) {
+                    let typeValue = dv.getUint8(offset);
+                    let type;
+                    switch (typeValue) {
+                        case 1: type = 'Armpit';
+                            break;
+                        case 2: type = 'Body (general)';
+                            break;
+                        case 3: type = 'Ear (usually ear lobe)';
+                            break;
+                        case 4: type = 'Finger';
+                            break;
+                        case 5: type = 'Gastro-intestinal Tract';
+                            break;
+                        case 6: type = 'Mouth';
+                            break;
+                        case 7: type = 'Rectum';
+                            break;
+                        case 8: type = 'Toe';
+                            break;
+                        case 9: type = 'Tympanum (ear drum)';
+                            break;
+                        default: type = '';
+                    }
+                    return type;
+                }
+            }
+            class TemperatureMeasurement {
+
+                constructor(buffer, littleEndian = false) {
+                    this.buffer = new DataView(buffer);
+                    this.littleEndian = littleEndian;
+
+                    this.offset = {
+                        init: 0,
+                        flags: 1,
+                        temperatureMeasurementValue: 4,
+                        timestamp: 7,
+                        temperatureType: 1,
+                    };
+                }
+                _checkTemperatureMeasurementValueFlats() {
+                    return ((this.getFlags() & 0x01) >= 1);
+                }
+                _checkTimestampFlags() {
+                    return ((this.getFlags() & 0x02) >= 1);
+                }
+                _checkTemperatureTypeFlags() {
+                    return ((this.getFlags() & 0x03) >= 1);
+                }
+                getTimestampOffset() {
+                    return this.offset.init + this.offset.flags + this.offset.temperatureMeasurementValue;
+                }
+                getTemperatureTypeOffset() {
+                    let offset = this.getTimestampOffset();
+                    if (this._checkTimestampFlags()) {
+                        offset += this.offset.timestamp;
+                    }
+                    return offset;
+                }
+                getFlags() {
+                    return this.buffer.getUint8(this.offset.init);
+                }
+                getValue() {
+                    let offset = this.offset.init + this.offset.flags;
+                    return BluetoothFormat.readFLOAT(this.buffer, offset, this.littleEndian);
+                }
+                getUnit() {
+                    if (this._checkTemperatureMeasurementValueFlats()) {
+                        return 'Fahrenheit';
+                    } else {
+                        return 'Celsius';
+                    }
+                }
+                getTimestamp() {
+                    if (this._checkTimestampFlags()) {
+                        let offset = this.getTimestampOffset();
+                        return BluetoothFormat.readDateTime(this.buffer, offset, this.littleEndian);
+                    } else {
+                        return 0;
+                    }
+                }
+                getType() {
+                    if (this._checkTemperatureTypeFlags()) {
+                        let offset = this.getTemperatureTypeOffset();
+                        return BluetoothFormat.readTemperatureType(this.buffer, offset, this.littleEndian);
+                    } else {
+                        return 0;
+                    }
+                }
+            }
+            let littleEndian = true;
+            let tm = new TemperatureMeasurement(dv.buffer, littleEndian);
+            Body_temperature = parseFloat(tm.getValue());
+            Data = new Date(tm.getTimestamp())
+            Data_date = Data.getFullYear() + "-" + (Data.getMonth() + 1) + "-" + Data.getDate()
+            Data_time = Data.getHours() + ":" + Data.getMinutes() + ":" + Data.getSeconds()
+            Send()
+        }
+
+        function delayPromise(delay) {
+            return new Promise(resolve => {
+                setTimeout(resolve, delay);
+            });
+        }
+        // ### cookieを配列として取り出し
+        function getCookieArray() {
+            var arr = new Array();
+            if (document.cookie != "") {
+                var tmp = document.cookie.split("; ");
+                for (var i = 0; i < tmp.length; i++) {
+                    var data = tmp[i].split("=");
+                    arr[data[0]] = decodeURIComponent(data[1]);
+                }
+            }
+            return arr;
+        }
+        arr = getCookieArray();
+        window.onload = function () {
+            socket.emit('check_cookie', arr['begginer']);
+        }
+
+    </script>
+</body>
+
+</html>

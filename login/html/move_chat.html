@@ -1,0 +1,104 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>映像合成用流れるコメラン</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.5.1/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.2/socket.io.js"></script>
+  <style>
+    html{
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+    }
+    body{
+      width: 100%;
+      height: 100%;
+    }
+    ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      border: 0;
+      width: 100%;
+      height: 100%;
+      
+    }
+  </style>
+</head>
+
+<body>
+
+  <ul id="message">
+  </ul>
+
+  <script>
+    var socket = io.connect();
+    var message = document.getElementById('message');       //流れるコメント ul
+
+    arr = getCookieArray();
+        socket.emit('check_cookie', arr['begginer']);
+        window.addEventListener("popstate", function (e) {
+            arr = getCookieArray();
+            socket.emit('check_cookie', arr['begginer']);
+        });
+
+    //コメント受け取る処理＋α
+    socket.on('chat', function (msg) {
+      console.log(msg)
+      createText(msg);
+    });
+    // ### cookieを配列として取り出し
+    function getCookieArray() {
+      var arr = new Array();
+      if (document.cookie != "") {
+        var tmp = document.cookie.split("; ");
+        for (var i = 0; i < tmp.length; i++) {
+          var data = tmp[i].split("=");
+          arr[data[0]] = decodeURIComponent(data[1]);
+        }
+      }
+      return arr;
+    }
+    arr = getCookieArray();
+    socket.emit('check_cookie', arr['begginer']);
+    window.addEventListener("popstate", function (e) {
+      arr = getCookieArray();
+      socket.emit('check_cookie', arr['begginer']);
+    });
+
+
+
+    //loginしているか
+    socket.on('Login', function (ans) {
+      if (!ans) {
+        location.href = '/';
+        alert("ログインに失敗しました！_checkemo")
+      }
+    });
+
+
+    let count = 0;
+    async function createText(msg) {
+      let li_text = document.createElement('li');
+      li_text.id = "text" + count; //アニメーション処理で対象の指定に必要なidを設定
+      count++;
+      li_text.style.position = 'fixed'; //テキストのは位置を絶対位置にするための設定
+      li_text.style.whiteSpace = 'nowrap' //画面右端での折り返しがなく、画面外へはみ出すようにする
+      li_text.style.left = (document.documentElement.clientWidth) + 'px'; //初期状態の横方向の位置は画面の右端に設定
+      var random = Math.round(Math.random() * document.documentElement.clientHeight);
+      li_text.style.top = random + 'px';  //初期状態の縦方向の位置は画面の上端から下端の間に設定（ランダムな配置に）
+      li_text.appendChild(document.createTextNode(msg)); //画面上に表示されるテキストを設定
+      message.appendChild(li_text); //message直下へ挿入
+
+      //ライブラリを用いたテキスト移動のアニメーション： durationはアニメーションの時間、
+      //横方向の移動距離は「画面の横幅＋画面を流れるテキストの要素の横幅」、移動中に次の削除処理がされないようawait
+      await gsap.to("#" + li_text.id, { duration: 5, x: -1 * (document.documentElement.clientWidth + li_text.clientWidth), ease: "none" });
+
+      li_text.parentNode.removeChild(li_text); //画面上の移動終了後に削除
+    }
+  </script>
+</body>
+
+</html>

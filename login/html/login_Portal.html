@@ -1,0 +1,183 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>ログイン ポータル</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.2/socket.io.js"></script>
+    <link rel="stylesheet" href="css/base.css">
+    <style>
+        main {
+            display: block;
+            margin: 0 auto;
+            max-width: 1000px;
+        }
+
+        #conA_inner {
+            display: flex;
+            flex-direction: row-reverse;
+            align-items: center;
+        }
+
+        #conA_inner span {
+            color: #333;
+            margin-right: 0.5rem;
+        }
+        h1 {
+            font-size: 3rem;
+            margin: 0 auto;
+        }
+
+        #chat_page {
+            width: 800px;
+            height: 8rem;
+            background: rgb(121, 214, 195);
+            background: linear-gradient(0deg, rgba(121, 214, 195, 1) 0%, rgba(121, 214, 195, 1) 49%, rgba(174, 227, 222, 1) 51%, rgba(174, 227, 222, 1) 100%);
+            margin: 2rem auto;
+            border-radius: 13px 13px 13px 13px;
+        }
+
+        #chat_page a {
+            display: block;
+            color: #333;
+            text-decoration: none;
+            text-align: center;
+            line-height: 8rem;
+            font-size: 3rem;
+            font-weight: bold;
+        }
+
+        #login_portal p {
+            line-height: 0;
+        }
+
+        #login_portal div {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        #login_portal div p {
+            height: 6rem;
+            width: 350px;
+            border-radius: 13px 13px 13px 13px;
+            background: rgb(121, 214, 195);
+            background: linear-gradient(0deg, rgba(121, 214, 195, 1) 0%, rgba(121, 214, 195, 1) 49%, rgba(174, 227, 222, 1) 51%, rgba(174, 227, 222, 1) 100%);
+            margin-bottom: 2rem;
+        }
+
+        #login_portal div p a {
+            display: block;
+            line-height: 6rem;
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #333;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        #login_portal .external_link p {
+            height: 4rem;
+            width: 800px;
+            border-radius: 13px 13px 13px 13px;
+            background: rgb(121, 214, 195);
+            background: linear-gradient(0deg, rgba(121, 214, 195, 1) 0%, rgba(121, 214, 195, 1) 49%, rgba(174, 227, 222, 1) 51%, rgba(174, 227, 222, 1) 100%);
+            margin-bottom: 2rem;
+        }
+
+        #login_portal .external_link p a {
+            display: block;
+            line-height: 4rem;
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #333;
+            text-align: center;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="white_wrap"><div></div></div>
+    <header>
+        <div class="conA">
+            <div class="wrap-content" id="conA_inner">
+                <button type="button" id="logout_btn" onclick="logoutOnclick();">LOGOUT</button>
+            </div>
+            <!--werap-content-->
+        </div>
+        <!--conA-->
+
+        <div class="conB">
+            <div class="wrap-content">
+                <h1><span id="kana">コミュニケーションポータル</span></h1>
+            </div>
+            <!--werap-content-->
+        </div>
+        <!--conB-->
+    </header>
+    <main>
+        <div class="wrap-content">
+            <div id="login_portal">
+                <p>&nbsp;</p>
+                <p id="chat_page"><a href="chat.html">チャットページ</a></p>
+                <div>
+                    <p id="check_emo_page"><a href="check_emo.html">表情チェック</a></p>
+                    <p id="check_temperature_page"><a href="Check_temperature.html">体温チェック</a></p>
+                    <p id="RTC_page"><a href="RTC.html">RTC</a></p>
+                    <p id="Geolocation"><a href="Geolocation.html">Geolocation</a></p>
+                </div>
+                <div class="external_link">
+                    <p id="move_chat"><a href="move_chat.html">流れるコメ欄</a></p>
+                    <p id="button"><a onclick="chatClick();" id="move_quiz">クイズシステムポータルへ移動</a></p>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script>
+        var socket = io.connect();
+        // ### cookieを配列として取り出し
+        function getCookieArray() {
+            var arr = new Array();
+            if (document.cookie != "") {
+                var tmp = document.cookie.split("; ");
+                for (var i = 0; i < tmp.length; i++) {
+                    var data = tmp[i].split("=");
+                    arr[data[0]] = decodeURIComponent(data[1]);
+                }
+            }
+            return arr;
+        }
+        arr = getCookieArray();
+        socket.emit('check_cookie', arr['begginer']);
+        window.addEventListener("popstate", function (e) {
+            arr = getCookieArray();
+            socket.emit('check_cookie', arr['begginer']);
+        });
+
+        socket.on('Login', function (ans) {
+            console.log(ans);
+            if (!ans) {
+                location.href = '/';
+            }
+            var Uname = document.createElement('span');
+            Uname.textContent = " ようこそ、" + ans + "さん";
+            document.getElementById('conA_inner').appendChild(Uname);
+        });
+
+        function logoutOnclick() {
+            console.log("Logout")
+            socket.emit('logout_cookie', arr['begginer']);
+            alert("ログアウトしました")
+            location.href = '/';
+        }
+        function chatClick() {
+            var hostname = window.location.hostname;
+            location.href = `http://${hostname}/portal`;
+        }
+    </script>
+</body>
+
+</html>

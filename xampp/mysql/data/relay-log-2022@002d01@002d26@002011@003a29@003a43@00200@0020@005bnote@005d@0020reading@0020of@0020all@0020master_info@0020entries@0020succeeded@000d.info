@@ -1,0 +1,16 @@
+5
+.\mysql-relay-bin-2022@002d01@002d26@002011@003a29@003a43@00200@0020@005bnote@005d@0020reading@0020of@0020all@0020master_info@0020entries@0020succeeded@000d.000001
+4
+
+0
+0
+2022-02-28 15:10:22 17 [Warning] Aborted connection 17 to db: 'login' user: 'root' host: 'localhost' (Got an error reading communication packets)
+g event: slave SQL thread aborted because of I/O error
+2022-02-28 15:09:25 13 [ERROR] Master '2022-01-26 11:29:43 0 [Note] c:\xampp\mysql\bin\mysqld.exe: ready for connections.': Slave SQL: Relay log read failure: Could not parse relay log event entry. The possible reasons are: the master's binary log is corrupted (you can check this by running 'mysqlbinlog' on the binary log), the slave's relay log is corrupted (you can check this by running 'mysqlbinlog' on the relay log), a network problem, or a bug in the master's or slave's MySQL code. If you want to check the master's binary log or slave's relay log, you will be able to know their names by issuing 'SHOW SLAVE STATUS' on this slave. Internal MariaDB error code: 1594
+2022-02-28 15:09:25 13 [ERROR] Master '2022-01-26 11:29:43 0 [Note] c:\xampp\mysql\bin\mysqld.exe: ready for connections.': Error running query, slave SQL thread aborted. Fix the problem, and restart the slave SQL thread with "SLAVE START". We stopped at log 'FIRST' position 0
+2022-02-28 15:09:25 13 [Note] Master '2022-01-26 11:29:43 0 [Note] c:\xampp\mysql\bin\mysqld.exe: ready for connections.': Slave SQL thread exiting, replication stopped in log 'FIRST' at position 0
+2022-02-28 15:09:25 13 [Note] Master '2022-01-26 11:29:43 0 [Note] c:\xampp\mysql\bin\mysqld.exe: ready for connections.': master was :3306
+5 0 [Note] Reading of all Master_info entries succeeded
+2022-02-28 15:09:25 14 [Note] Master 'Version: '10.4.21-MariaDB'  socket: ''  port: 3306  mariadb.org binary distribution': Slave I/O thread killed while connecting to master
+2022-02-28 15:09:25 0 [Note] Added new Master_info '' to hash table
+2022-02-28 15:09:25 14 [Note] Master 'Version: '10.4.21-MariaDB'  socket: ''  port: 3306  mariadb.org binary distribution': Slave I/O thread exiting, 

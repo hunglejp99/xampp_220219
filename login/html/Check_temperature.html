@@ -1,0 +1,477 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>無題ドキュメント</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.5.1/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.2/socket.io.js"></script>
+  <style>
+    * {
+      margin: 0;
+      border: 0;
+      padding: 0.25rem;
+      border-spacing: 0;
+    }
+    html,body{
+      padding: 0;
+    }
+    .table_wrap{
+      background-color: #eee;
+      padding: 0.5rem 0;
+    }
+    table {
+      border-collapse: collapse;
+      background-color: #eee;
+      margin: 1rem;  
+    }
+    h1{
+      font-size: 2rem;
+    }
+
+    #thermal_table_0 {
+      display: none;
+    }
+
+    #thermal_table_2 {
+      display: none;
+    }
+
+    tr th h2 {
+      width: 0;
+      white-space: nowrap;
+    }
+
+    tr td {
+      white-space: nowrap;
+      text-align: center;
+      padding: 0;
+    }
+
+    tr td details {
+      white-space: nowrap;
+      text-align: center;
+      padding: 0;
+    }
+
+    tr td details p {
+      white-space: nowrap;
+      text-align: center;
+
+    }
+
+    tr td details summary {
+      white-space: nowrap;
+      text-align: center;
+      padding: 0;
+      list-style: none;
+      cursor: pointer;
+    }
+
+    tr th {
+      white-space: nowrap;
+      min-width: 12rem;
+      display: block;
+    }
+
+    tr {
+      border-bottom: 0.25rem solid #333;
+    }
+    .sort_parameter{
+      display: flex;
+      margin-bottom: 2rem;
+      padding-left: 1rem;
+    }
+    .sort_parameters{
+      display: flex;
+      justify-content: space-between;
+    }
+    .sort_parameters select{
+      padding-left: 1rem;
+      border-bottom: 1px solid #333333;
+      background: none;
+    }
+    .sort_parameters h4{
+      margin-right: 2rem;
+    }
+    .sort_parameter input{
+      margin-left: 2rem;
+      padding: 0 0.25rem;
+      border: 1px solid#333;
+    }
+    div{
+      padding: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>体温チェック</h1>
+  <div class="sort_parameter">
+    <div>
+      <div class="sort_parameters">
+          <h4>学籍番号で検索</h4>
+          <select id="input_num" onchange="select_one_student()">
+            <option value="">指定して検索</option>
+          </select>
+      </div>
+      <div class="sort_parameters">
+        <h4>指定した日付以前を検索</h4>
+        <select id="input_year" onchange="select_one_year()">
+          <option value="">年/月</option>
+        </select>
+        <select id="input_date" onchange="select_one_date()">
+          <option value="">日 検索</option>
+        </select>
+      </div>
+    </div>
+    <input type="button" value="検索条件を解除" onclick="clear_input()">
+  </div>
+  <div class="table_wrap">
+    <table>
+      <tbody id="thermal_table_0">
+        <tr id="h2">
+          <th>
+            <h2>保存された体温情報一覧</h2>
+          </th>
+        </tr>
+      </tbody>
+      <tbody id="thermal_table_1">
+        <tr id="h2">
+          <th>
+            <h2>その日の最大体温を表示、クリックで一覧</h2>
+          </th>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <script>
+    var socket = io.connect();
+    socket.emit('health_LOG', "call");
+
+    socket.on('health_LOG', function (log) {
+      //console.log(log[0], log[1], log[2], log[3], log[4], log[5])
+
+      //日付縦軸部分 table_1
+      var date_tr
+      var date_tr_id = "date_tr"
+      var date_id = "_date_" + log[3]
+      if (!!document.getElementById(date_tr_id)) {
+        //date_trを指定
+        date_tr = document.getElementById(date_tr_id)
+      } else {
+        //date_trを作成
+        date_tr = document.createElement('tr')
+        date_tr.id = date_tr_id
+        document.getElementById('thermal_table_1').appendChild(date_tr)
+        var th = document.createElement('th');
+        th.textContent = "学籍番号/username";
+        date_tr.appendChild(th);
+      }
+      if (!!document.getElementById(date_id)) {
+        //すでに追加済みの日付を無視
+      } else {
+        //新規日付追加
+        var td = document.createElement('td');
+        td.id = date_id
+        td.textContent = log[3];
+        date_tr.appendChild(td);
+
+        //プルダウンに追加
+        var year_date = log[3];
+        var year = ""
+        var date = ""
+
+        var cnt = 0
+        for (var i = 0; i < year_date.length; i++) {
+          if (cnt >= 2) {
+            date += year_date.charAt(i);
+          }
+          if (year_date.charAt(i) == "-") cnt++;
+          if (cnt < 2) {
+            year += year_date.charAt(i);
+          }
+        }
+
+        if (!!document.getElementById("dateYear_" + year)) {
+          //yearが追加済みかどうか、追加済みならスルー
+        } else {
+          var option_y = document.createElement('option');
+          option_y.textContent = year
+          option_y.value = year
+          option_y.id = "dateYear_" + year
+          document.getElementById("input_year").appendChild(option_y);
+        }
+        var option_d = document.createElement('option');
+        option_d.textContent = date
+        option_d.value = date
+        option_d.id = "dateDay_" + year
+        document.getElementById("input_date").appendChild(option_d);
+      }
+
+
+      //データ部分
+      if (log[6] == 0) {//全部書き出し table_0
+        var newid_tr = "student_" + log[0] + "_0";
+        var table = document.getElementById('thermal_table_0');
+        var newid_td = "student_" + log[3] + "_date_" + log[3] + log[0] + "_0";
+        var tr
+        if (!!document.getElementById(newid_tr)) {
+          //すでに追加済みのユーザーの場合対象のtrを指定
+          tr = document.getElementById(newid_tr)
+        } else {
+          //新規tr追加
+          var newtr = document.createElement('tr')
+          newtr.id = newid_tr
+          tr = table.appendChild(newtr)
+          //学籍番号を追加
+          var th = document.createElement('th');
+          th.textContent = log[0]
+          tr.appendChild(th);
+          //プルダウン候補追加
+          var option = document.createElement('option');
+          option.textContent = log[0]
+          option.value = log[0]
+          document.getElementById("input_num").appendChild(option);
+        }
+        var newtd = document.createElement('td')
+        newtd.id = newid_td
+        var td = tr.appendChild(newtd)
+
+        var tmp_p = document.createElement('p')
+        tmp_p.textContent = log[1].toFixed(1);
+        var tem = td.appendChild(tmp_p);
+        tem.style.backgroundColor = setgradient(log[1])
+
+        var date_p = document.createElement('p')
+        date_p.textContent = log[3] + "_" + log[4];
+        var date = td.appendChild(date_p);
+      }
+
+      if (log[6] == 1) {//一日の最大体温のみ table_1
+        var newid_tr = "student_" + log[0] + "_1";
+        var table = document.getElementById('thermal_table_1');
+        var newid_td = "student_" + log[0] + "_date_" + log[3] + "_1_td";
+        var newid_details = "student_" + log[0] + "_date_" + log[3] + "_1_details";
+        var tr
+        if (!!document.getElementById(newid_tr)) {
+          //すでに追加済みのユーザーの場合対象のtrを指定
+          tr = document.getElementById(newid_tr)
+        } else {
+          //新規tr追加
+          var newtr = document.createElement('tr')
+          newtr.id = newid_tr
+          tr = table.appendChild(newtr)
+          //学籍番号を追加
+          var th = document.createElement('th');
+          th.textContent = log[0] +": "+ log[5]
+          tr.appendChild(th);
+        }
+        if (!!document.getElementById(newid_td)) {//最大体温以外
+          var details = document.getElementById(newid_td).getElementsByTagName("details")[0]
+          var newp = document.createElement('p')
+          newp.textContent = log[4] + " : " + log[1].toFixed(1)
+          newp.style.backgroundColor = setgradient(log[1]);
+          details.appendChild(newp)
+
+        } else {
+          var date_td = document.getElementById("date_tr").getElementsByTagName("td")//最大体温
+          for (var i = 0; i < date_td.length; i++) {
+            if (newid_td.match(date_td[i].id)) {
+              var set_thisTr_length = tr.getElementsByTagName("td").length;
+              for (var l = 0; l < i - set_thisTr_length; l++) {
+                var nulltd = document.createElement('td')
+                nulltd.id = "nulltd" + date_td[l + set_thisTr_length].id
+                nulltd.style.backgroundColor = "#666666"
+                nulltd.style.color = "#ffffff"
+                nulltd.textContent = "記録なし";
+                var td = tr.appendChild(nulltd)
+              }
+            }
+          }
+          var newtd = document.createElement('td')
+          newtd.id = newid_td
+          var td = tr.appendChild(newtd)
+
+          var newdetails = document.createElement('details')
+          newdetails.id = newid_details
+          var details = td.appendChild(newdetails)
+
+          var newsummary = document.createElement('summary')
+          //newsummary.textContent = "他データ"
+          //newsummary.style.backgroundColor = setgradient(log[1]);
+          var summary = newdetails.appendChild(newsummary);
+
+          var newp2 = document.createElement('p')
+          newp2.textContent = log[3] + "_" + log[4]
+          //newp2.style.backgroundColor = setgradient(log[1]);
+          var p = summary.prepend(newp2)
+
+          var newp = document.createElement('p')
+          newp.textContent = log[1].toFixed(1)
+          newp.style.backgroundColor = setgradient(log[1]);
+          var p = summary.prepend(newp)
+
+        }
+      }
+      //初期化
+      set_one_month()
+    })
+
+    function clear_input() {
+      document.getElementById("input_num").value = "";
+      document.getElementById("input_date").value = "";
+      document.getElementById("input_year").value = "";
+      select_one_year()
+      set_one_month()
+      select_one_student()
+    }
+
+    function select_one_student() {
+      var num = document.getElementById("input_num").value;
+      if (num == "") {
+        var test_tr = document.getElementsByTagName("tr");
+        for (var i = 0; i < test_tr.length; i++) {
+          test_tr[i].style.display = "table-row";
+        }
+      } else {
+        var test_tr = document.getElementsByTagName("tr");
+        for (var i = 0; i < test_tr.length; i++) {
+          if (test_tr[i].id.match("student_" + num)) {
+            test_tr[i].style.display = "table-row";
+          } else {
+            if (test_tr[i].id != "h2" && test_tr[i].id != "date_tr") {
+              test_tr[i].style.display = "none";
+            }
+          }
+        }
+      }
+    }
+
+    function select_one_year() {
+      var num = document.getElementById("input_year").value
+      var date = document.getElementById("input_date").value
+      if (num == "") {
+        document.getElementById("input_date").value = ""
+        var test_td = document.getElementsByTagName("td");
+        for (var i = 0; i < test_td.length; i++) {
+          test_td[i].style.display = "table-cell";
+        }
+      } else {
+        var test_td = document.getElementsByTagName("td");
+        for (var i = 0; i < test_td.length; i++) {
+          if (test_td[i].id.match("date_" + num)) {
+            test_td[i].style.display = "table-cell";
+          } else {
+            test_td[i].style.display = "none";
+          }
+        }
+      }
+    }
+
+    function select_one_date() {
+      var num = document.getElementById("input_date").value
+      var year = document.getElementById("input_year").value
+      if (year == "") {
+        document.getElementById("input_year").value = document.getElementById("input_year").options[1].value;
+        select_one_date()
+      } else {
+        var test_tr = document.getElementById("thermal_table_1").getElementsByTagName("tr");
+        for (var i = 0; i < test_tr.length; i++) {
+          var test_td = test_tr[i].getElementsByTagName("td");
+          for (var m = 0; m < test_td.length; m++) {
+            if (test_td[m].id.match("date_" + year + "-" + num)) {
+              for (var l = 0; l < m; l++) {
+                test_td[l].style.display = "none";
+              }
+              //test_td[i].style.display = "table-cell";
+            } else {
+              //test_td[i].style.display = "none";
+            }
+          }
+
+        }
+      }
+      set_one_month()
+    }
+
+    function set_one_month() {
+      var num
+      if (document.getElementById("input_year").value == "") {
+        num = document.getElementById("input_year").options[1].value;
+      } else {
+        num = document.getElementById("input_year").value
+      }
+      var test_option = document.getElementById("input_date").getElementsByTagName("option");
+      for (var i = 0; i < test_option.length; i++) {
+        if (test_option[i].id.match("dateDay_" + num)) {
+          test_option[i].style.display = "block";
+        } else {
+          test_option[i].style.display = "none";
+        }
+      }
+
+    }
+
+    function setgradient(num) {
+      //35    00 7f ff
+      //36    7f ff 00  
+      //36.5  7f ff 00
+      //37    ff ff 00
+      //37.5  ff 7f 00
+      //38    ff 00 00
+      var r, g, b, color;
+
+      //red
+      if (num <= 35) {
+        r = "00"
+      } else if (35 < num && num <= 36) {
+        r = (parseInt((num - 35) * 127, 10)).toString(16)
+      } else if (36 < num && num <= 36.5) {
+        r = "7f"
+      } else if (36.5 < num && num <= 37) {
+        r = (parseInt((num - 36.5) * 254, 10) + 127).toString(16)
+      } else {
+        r = "ff"
+      }
+      if (r.length == 1) {
+        r = "0" + r
+      }
+      //green
+      if (num <= 35) {
+        g = "7f"
+      } else if (35 < num && num <= 36) {
+        g = (parseInt((num - 35) * 127, 10) + 127).toString(16)
+      } else if (36 < num && num <= 37) {
+        g = "ff"
+      } else if (37 < num && num <= 37.5) {
+        g = (255 - parseInt((num - 37) * 254, 10)).toString(16)
+      } else if (37.5 < num && num <= 38) {
+        g = (128 - parseInt((num - 37.5) * 254, 10)).toString(16)
+      } else {
+        g = "00"
+      }
+      if (g.length == 1) {
+        g = "0" + g
+      }
+
+      //blue
+      if (num <= 35) {
+        b = "ff"
+      } else if (35 < num && num <= 36) {
+        b = (255 - parseInt((num - 35) * 254, 10)).toString(16)
+      } else {
+        b = "00"
+      }
+      if (b.length == 1) {
+        b = "0" + b
+      }
+
+      color = "#" + r + g + b;
+      //console.log(num + ": " + color);
+      return color;
+    }
+  </script>
+</body>
+
+</html>

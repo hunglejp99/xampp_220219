@@ -1,0 +1,12 @@
+5
+.\mysql-relay-bin-2022@002d01@002d26@002011@003a29@003a43@00200@0020@005bnote@005d@0020c@003a@005cxampp@005cmysql@005cbin@005cmysqld@002eexe@003a@0020ready@0020for@0020connections@002e@000d.000001
+4
+
+0
+0
+2022-02-27 12:14:04 13 [ERROR] Master '2022-01-26 11:29:43 0 [Note] c:\xampp\mysql\bin\mysqld.exe: ready for connections.': Error in Log_event::read_log_event(): 'Event truncated', data_len: 842145840, event_type: 45
+2022-02-27 12:14:04 13 [ERROR] Master '2022-01-26 11:29:43 0 [Note] c:\xampp\mysql\bin\mysqld.exe: ready for connections.': Error reading relay log event: slave SQL thread aborted because of I/O error
+2022-02-27 12:14:04 13 [ERROR] Master '2022-01-26 11:29:43 0 [Note] c:\xampp\mysql\bin\mysqld.exe: ready for connections.': Slave SQL: Relay log read failure: Could not parse relay log event entry. The possible reasons are: the master's binary log is corrupted (you can check this by running 'mysqlbinlog' on the binary log), the slave's relay log is corrupted (you can check this by running 'mysqlbinlog' on the relay log), a network problem, or a bug in the master's or slave's MySQL code. If you want to check the master's binary log or slave's relay log, you will be able to know their names by issuing 'SHOW SLAVE STATUS' on this slave. Internal MariaDB error code: 1594
+2022-02-27 12:14:04 13 [ERROR] Master '2022-01-26 11:29:43 0 [Note] c:\xampp\mysql\bin\mysqld.exe: ready for connections.': Error running query, slave SQL thread aborted. Fix the problem, and restart the slave SQL thread with "SLAVE START". We stopped at log 'FIRST' position 0
+2022-02-27 12:14:04 13 [Note] Master '2022-01-26 11:29:43 0 [Note] c:\xampp\mysql\bin\mysqld.exe: ready for connections.': Slave SQL thread exiting, replication stopped in log 'FIRST' at position 0
+2022-02-27 12:14:04 13 [Note] Master '2022-01-26 11:29:43 0 [Note] c:\xampp\mysql\bin\mysqld.exe: ready for connections.': master was :3306

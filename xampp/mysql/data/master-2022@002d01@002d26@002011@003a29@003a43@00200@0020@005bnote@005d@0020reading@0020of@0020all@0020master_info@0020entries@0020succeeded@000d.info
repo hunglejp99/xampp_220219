@@ -1,0 +1,93 @@
+33
+
+4
+
+
+
+3306
+60
+0
+
+
+
+
+
+0
+30.000
+
+0
+
+0
+
+
+
+
+
+
+
+
+
+
+
+
+
+using_gtid=0
+do_domain_ids=0
+ignore_domain_ids=0
+END_MARKER
+2022-02-28  7:36:57 7 [Note] Initialized Master_info from 'master-2022@002d01@002d26@002011@003a29@003a43@00200@0020@005bnote@005d@0020reading@0020of@0020all@0020master_info@0020entries@0020succeeded@000d.info'
+2022-02-28  7:36:57 7 [Note] Added new Master_info '2022-01-26 11:29:43 0 [Note] Reading of all Master_info entries succeeded' to hash table
+2022-02-28  7:36:57 8 [Note] Master '2022-01-26 11:29:43 0 [Note] Reading of all Master_info entries succeeded': Slave I/O thread: Start asynchronous replication to master '@:3306' in log '' at position 4
+2022-02-28  7:36:57 7 [Note] Started replication for '2022-01-26 11:29:43 0 [Note] Reading of all Master_info entries succeeded'
+2022-02-28  7:36:57 9 [Note] Master '2022-01-26 11:29:43 0 [Note] Reading of all Master_info entries succeeded': Slave SQL thread initialized, starting replication in log 'FIRST' at position 0, relay log '.\mysql-relay-bin-2022@002d01@002d26@002011@003a29@003a43@00200@0020@005bnote@005d@0020reading@0020of@0020all@0020master_info@0020entries@0020succeeded@000d.000001' position: 4
+2022-02-28  7:36:57 8 [ERROR] Master '2022-01-26 11:29:43 0 [Note] Reading of all Master_info entries succeeded': Slave I/O: Fatal error: Invalid (empty) username when attempting to connect to the master server. Connection attempt terminated. Internal MariaDB error code: 1593
+2022-02-28  7:36:57 7 [Note] Reading Master_info: 'master-2022@002d01@002d26@002011@003a29@003a43@00200@0020@005bnote@005d@0020added@0020new@0020master_info@0020@0027@0027@0020to@0020hash@0020table@000d.info'  Relay_info:'relay-log-2022@002d01@002d26@002011@003a29@003a43@00200@0020@005bnote@005d@0020added@0020new@0020master_info@0020@0027@0027@0020to@0020hash@0020table@000d.info'
+2022-02-28  7:36:57 8 [Note] Master '2022-01-26 11:29:43 0 [Note] Reading of all Master_info entries succeeded': Slave I/O thread killed while connecting to master
+2022-02-28  7:36:57 8 [Note] Master '2022-01-26 11:29:43 0 [Note] Reading of all Master_info entries succeeded': Slave I/O thread exiting, read up to log 'FIRST', position 4
+2022-02-28  7:36:57 8 [Note] Master '2022-01-26 11:29:43 0 [Note] Reading of all Master_info entries succeeded': master was :3306
+2022-02-28  7:36:57 7 [Note] Initialized Master_info from 'master-2022@002d01@002d26@002011@003a29@003a43@00200@0020@005bnote@005d@0020added@0020new@0020master_info@0020@0027@0027@0020to@0020hash@0020table@000d.info'
+2022-02-28  7:36:57 7 [Note] Added new Master_info '2022-01-26 11:29:43 0 [Note] Added new Master_info '' to hash table' to hash table
+2022-02-28  7:36:57 10 [Note] Master '2022-01-26 11:29:43 0 [Note] Added new Master_info '' to hash table': Slave I/O thread: Start asynchronous replication to master '@:3306' in log '' at position 4
+2022-02-28  7:36:57 7 [Note] Started replication for '2022-01-26 11:29:43 0 [Note] Added new Master_info '' to hash table'
+2022-02-28  7:36:57 11 [Note] Master '2022-01-26 11:29:43 0 [Note] Added new Master_info '' to hash table': Slave SQL thread initialized, starting replication in log 'FIRST' at position 0, relay log '.\mysql-relay-bin-2022@002d01@002d26@002011@003a29@003a43@00200@0020@005bnote@005d@0020added@0020new@0020master_info@0020@0027@0027@0020to@0020hash@0020table@000d.000001' position: 4
+2022-02-28  7:36:57 10 [ERROR] Master '2022-01-26 11:29:43 0 [Note] Added new Master_info '' to hash table': Slave I/O: Fatal error: Invalid (empty) username when attempting to connect to the master server. Connection attempt terminated. Internal MariaDB error code: 1593
+2022-02-28  7:36:57 7 [Note] Reading Master_info: 'master-2022@002d01@002d26@002011@003a29@003a43@00200@0020@005bnote@005d@0020c@003a@005cxampp@005cmysql@005cbin@005cmysqld@002eexe@003a@0020ready@0020for@0020connections@002e@000d.info'  Relay_info:'relay-log-2022@002d01@002d26@002011@003a29@003a43@00200@0020@005bnote@005d@0020c@003a@005cxampp@005cmysql@005cbin@005cmysqld@002eexe@003a@0020ready@0020for@0020connections@002e@000d.info'
+2022-02-28  7:36:57 10 [Note] Master '2022-01-26 11:29:43 0 [Note] Added new Master_info '' to hash table': Slave I/O thread killed while connecting to master
+2022-02-28  7:36:57 10 [Note] Master '2022-01-26 11:29:43 0 [Note] Added new Master_info '' to hash table': Slave I/O thread exiting, read up to log 'FIRST', position 4
+2022-02-28  7:36:57 10 [Note] Master '2022-01-26 11:29:43 0 [Note] Added new Master_info '' to hash table': master was :3306
+2022-02-28  7:36:57 7 [Note] Initialized Master_info from 'master-2022@002d01@002d26@002011@003a29@003a43@00200@0020@005bnote@005d@0020c@003a@005cxampp@005cmysql@005cbin@005cmysqld@002eexe@003a@0020ready@0020for@0020connections@002e@000d.info'
+2022-02-28  7:36:57 7 [Note] Added new Master_info '2022-01-26 11:29:43 0 [Note] c:\xampp\mysql\bin\mysqld.exe: ready for connections.' to hash table
+2022-02-28  7:36:57 12 [Note] Master '2022-01-26 11:29:43 0 [Note] c:\xampp\mysql\bin\mysqld.exe: ready for connections.': Slave I/O thread: Start asynchronous replication to master '@:3306' in log '' at position 4
+2022-02-28  7:36:57 7 [Note] Started replication for '2022-01-26 11:29:43 0 [Note] c:\xampp\mysql\bin\mysqld.exe: ready for connections.'
+2022-02-28  7:36:57 13 [Note] Master '2022-01-26 11:29:43 0 [Note] c:\xampp\mysql\bin\mysqld.exe: ready for connections.': Slave SQL thread initialized, starting replication in log 'FIRST' at position 0, relay log '.\mysql-relay-bin-2022@002d01@002d26@002011@003a29@003a43@00200@0020@005bnote@005d@0020c@003a@005cxampp@005cmysql@005cbin@005cmysqld@002eexe@003a@0020ready@0020for@0020connections@002e@000d.000001' position: 4
+2022-02-28  7:36:57 12 [ERROR] Master '2022-01-26 11:29:43 0 [Note] c:\xampp\mysql\bin\mysqld.exe: ready for connections.': Slave I/O: Fatal error: Invalid (empty) username when attempting to connect to the master server. Connection attempt terminated. Internal MariaDB error code: 1593
+2022-02-28  7:36:57 7 [Note] Reading Master_info: 'master-version@003a@0020@002710@002e4@002e21@002dmariadb@0027@0020@0020socket@003a@0020@0027@0027@0020@0020port@003a@00203306@0020@0020mariadb@002eorg@0020binary@0020distribution@000d.info'  Relay_info:'relay-log-version@003a@0020@002710@002e4@002e21@002dmariadb@0027@0020@0020socket@003a@0020@0027@0027@0020@0020port@003a@00203306@0020@0020mariadb@002eorg@0020binary@0020distribution@000d.info'
+2022-02-28  7:36:57 12 [Note] Master '2022-01-26 11:29:43 0 [Note] c:\xampp\mysql\bin\mysqld.exe: ready for connections.': Slave I/O thread killed while connecting to master
+2022-02-28  7:36:57 12 [Note] Master '2022-01-26 11:29:43 0 [Note] c:\xampp\mysql\bin\mysqld.exe: ready for connections.': Slave I/O thread exiting, read up to log 'FIRST', position 4
+2022-02-28  7:36:57 12 [Note] Master '2022-01-26 11:29:43 0 [Note] c:\xampp\mysql\bin\mysqld.exe: ready for connections.': master was :3306
+2022-02-28  7:36:57 11 [ERROR] Master '2022-01-26 11:29:43 0 [Note] Added new Master_info '' to hash table': Error reading relay log event: Binlog has bad magic number;  It's not a binary log file that can be used by this version of MySQL
+2022-02-28  7:36:57 11 [ERROR] Master '2022-01-26 11:29:43 0 [Note] Added new Master_info '' to hash table': Slave SQL: Relay log read failure: Could not parse relay log event entry. The possible reasons are: the master's binary log is corrupted (you can check this by running 'mysqlbinlog' on the binary log), the slave's relay log is corrupted (you can check this by running 'mysqlbinlog' on the relay log), a network problem, or a bug in the master's or slave's MySQL code. If you want to check the master's binary log or slave's relay log, you will be able to know their names by issuing 'SHOW SLAVE STATUS' on this slave. Internal MariaDB error code: 1594
+2022-02-28  7:36:57 11 [ERROR] Master '2022-01-26 11:29:43 0 [Note] Added new Master_info '' to hash table': Error running query, slave SQL thread aborted. Fix the problem, and restart the slave SQL thread with "SLAVE START". We stopped at log 'FIRST' position 0
+2022-02-28  7:36:57 11 [Note] Master '2022-01-26 11:29:43 0 [Note] Added new Master_info '' to hash table': Slave SQL thread exiting, replication stopped in log 'FIRST' at position 0
+2022-02-28  7:36:57 11 [Note] Master '2022-01-26 11:29:43 0 [Note] Added new Master_info '' to hash table': master was :3306
+2022-02-28  7:36:57 7 [Note] Initialized Master_info from 'master-version@003a@0020@002710@002e4@002e21@002dmariadb@0027@0020@0020socket@003a@0020@0027@0027@0020@0020port@003a@00203306@0020@0020mariadb@002eorg@0020binary@0020distribution@000d.info'
+2022-02-28  7:36:57 7 [Note] Added new Master_info 'Version: '10.4.21-MariaDB'  socket: ''  port: 3306  mariadb.org binary distribution' to hash table
+2022-02-28  7:36:57 14 [Note] Master 'Version: '10.4.21-MariaDB'  socket: ''  port: 3306  mariadb.org binary distribution': Slave I/O thread: Start asynchronous replication to master '@:3306' in log '' at position 4
+2022-02-28  7:36:57 7 [Note] Started replication for 'Version: '10.4.21-MariaDB'  socket: ''  port: 3306  mariadb.org binary distribution'
+2022-02-28  7:36:57 15 [Note] Master 'Version: '10.4.21-MariaDB'  socket: ''  port: 3306  mariadb.org binary distribution': Slave SQL thread initialized, starting replication in log 'FIRST' at position 0, relay log '.\mysql-relay-bin-version@003a@0020@002710@002e4@002e21@002dmariadb@0027@0020@0020socket@003a@0020@0027@0027@0020@0020port@003a@00203306@0020@0020mariadb@002eorg@0020binary@0020distribution@000d.000001' position: 4
+2022-02-28  7:36:57 14 [ERROR] Master 'Version: '10.4.21-MariaDB'  socket: ''  port: 3306  mariadb.org binary distribution': Slave I/O: Fatal error: Invalid (empty) username when attempting to connect to the master server. Connection attempt terminated. Internal MariaDB error code: 1593
+2022-02-28  7:36:57 0 [Note] Reading of all Master_info entries succeeded
+2022-02-28  7:36:57 14 [Note] Master 'Version: '10.4.21-MariaDB'  socket: ''  port: 3306  mariadb.org binary distribution': Slave I/O thread killed while connecting to master
+2022-02-28  7:36:57 0 [Note] Added new Master_info '' to hash table
+2022-02-28  7:36:57 14 [Note] Master 'Version: '10.4.21-MariaDB'  socket: ''  port: 3306  mariadb.org binary distribution': Slave I/O thread exiting, read up to log 'FIRST', position 4
+2022-02-28  7:36:57 0 [Note] c:\users\201017\desktop\xampp_220219\xampp\mysql\bin\mysqld.exe: ready for connections.
+Version: '10.4.21-MariaDB'  socket: ''  port: 3306  mariadb.org binary distribution
+2022-02-28  7:36:57 14 [Note] Master 'Version: '10.4.21-MariaDB'  socket: ''  port: 3306  mariadb.org binary distribution': master was :3306
+2022-02-28  7:36:57 13 [ERROR] Master '2022-01-26 11:29:43 0 [Note] c:\xampp\mysql\bin\mysqld.exe: ready for connections.': Error in Log_event::read_log_event(): 'Event truncated', data_len: 842145840, event_type: 45
+2022-02-28  7:36:57 13 [ERROR] Master '2022-01-26 11:29:43 0 [Note] c:\xampp\mysql\bin\mysqld.exe: ready for connections.': Error reading relay log event: slave SQL thread aborted because of I/O error
+2022-02-28  7:36:57 13 [ERROR] Master '2022-01-26 11:29:43 0 [Note] c:\xampp\mysql\bin\mysqld.exe: ready for connections.': Slave SQL: Relay log read failure: Could not parse relay log event entry. The possible reasons are: the master's binary log is corrupted (you can check this by running 'mysqlbinlog' on the binary log), the slave's relay log is corrupted (you can check this by running 'mysqlbinlog' on the relay log), a network problem, or a bug in the master's or slave's MySQL code. If you want to check the master's binary log or slave's relay log, you will be able to know their names by issuing 'SHOW SLAVE STATUS' on this slave. Internal MariaDB error code: 1594
+2022-02-28  7:36:57 13 [ERROR] Master '2022-01-26 11:29:43 0 [Note] c:\xampp\mysql\bin\mysqld.exe: ready for connections.': Error running query, slave SQL thread aborted. Fix the problem, and restart the slave SQL thread with "SLAVE START". We stopped at log 'FIRST' position 0
+2022-02-28  7:36:57 13 [Note] Master '2022-01-26 11:29:43 0 [Note] c:\xampp\mysql\bin\mysqld.exe: ready for connections.': Slave SQL thread exiting, replication stopped in log 'FIRST' at position 0
+2022-02-28  7:36:57 13 [Note] Master '2022-01-26 11:29:43 0 [Note] c:\xampp\mysql\bin\mysqld.exe: ready for connections.': master was :3306
+2022-02-28  7:49:06 17 [Warning] Aborted connection 17 to db: 'login' user: 'root' host: 'localhost' (Got an error reading communication packets)
+2022-02-28  7:49:06 18 [Warning] Aborted connection 18 to db: 'login' user: 'root' host: 'localhost' (Got an error reading communication packets)
